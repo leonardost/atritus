@@ -1,64 +1,70 @@
 
-math.randomseed(os.time())
-
 bottle = {}
-for i = 1, 20 do
-    bottle[i] = {}
-    for j = 1, 10 do
-        bottle[i][j] = 0
-    end
+pieces = {}
+
+function init()
+	math.randomseed(os.time())
+
+	for i = 1, 20 do
+		bottle[i] = {}
+		for j = 1, 10 do
+			bottle[i][j] = 0
+		end
+	end
+
+	pieces[1] = {
+		color = { 0, 0, 255 },
+		blocks = {
+			1, 1, 1, 1,
+			0, 0, 0, 0
+		}
+	}
+	pieces[2] = {
+		color = { 255, 0, 0 },
+		blocks = {
+			1, 1, 0, 0,
+			0, 1, 1, 0
+		}
+	}
+	pieces[3] = {
+		color = { 0, 255, 0 },
+		blocks = {
+			0, 1, 1, 0,
+			1, 1, 0, 0
+		}
+	}
+	pieces[4] = {
+		color = { 255, 255, 0 },
+		blocks = {
+			1, 0, 0, 0,
+			1, 1, 1, 0
+		}
+	}
+	pieces[5] = {
+		color = { 0, 255, 255 },
+		blocks = {
+			0, 0, 1, 0,
+			1, 1, 1, 0
+		}
+	}
+	pieces[6] = {
+		color = { 255, 0, 255 },
+		blocks = {
+			0, 1, 0, 0,
+			1, 1, 1, 0
+		}
+	}
+	pieces[7] = {
+		color = { 255, 255, 255 },
+		blocks = {
+			1, 1, 0, 0,
+			1, 1, 0, 0
+		}
+	}
+
 end
 
-pieces = {}
-pieces[1] = {
-    color = { 0, 0, 255 },
-    blocks = {
-        1, 1, 1, 1,
-        0, 0, 0, 0
-    }
-}
-pieces[2] = {
-    color = { 255, 0, 0 },
-    blocks = {
-        1, 1, 0, 0,
-        0, 1, 1, 0
-    }
-}
-pieces[3] = {
-    color = { 0, 255, 0 },
-    blocks = {
-        0, 1, 1, 0,
-        1, 1, 0, 0
-    }
-}
-pieces[4] = {
-    color = { 255, 255, 0 },
-    blocks = {
-        1, 0, 0, 0,
-        1, 1, 1, 0
-    }
-}
-pieces[5] = {
-    color = { 0, 255, 255 },
-    blocks = {
-        0, 0, 1, 0,
-        1, 1, 1, 0
-    }
-}
-pieces[6] = {
-    color = { 255, 0, 255 },
-    blocks = {
-        0, 1, 0, 0,
-        1, 1, 1, 0
-    }
-}
-pieces[7] = {
-    color = { 255, 255, 255 },
-    blocks = {
-        1, 1, 0, 0,
-        1, 1, 0, 0
-    }
-}
+init()
 
 currentPiece = {
     type = math.random(1, 7),
