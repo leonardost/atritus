@@ -1,2 +1,3 @@
-# atritus
-Tetris clone made using the LÖVE engine
+# Atritus
+
+Tetris clone made using the LÖVE engine. Developed for fun and education purposes.
