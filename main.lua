@@ -43,7 +43,7 @@ local shadowPiece = currentPiece.copy()
 shadowPiece.setShadow()
 
 function love.load()
-	math.randomseed(os.time())
+    math.randomseed(os.time())
     love.window.setTitle("Atritus")
     love.window.setMode(320, 240, { centered = true })
 end
@@ -51,14 +51,14 @@ end
 function love.update(dt)
 
     if love.keyboard.isDown("left") and currentPiece.canMoveLeft() and keyDelayPassed(dt) then
-		currentPiece.moveLeft()
+        currentPiece.moveLeft()
         keyDelay = secondaryKeyDelayThreshould
     elseif love.keyboard.isDown("right") and currentPiece.canMoveRight() and keyDelayPassed(dt) then
-		currentPiece.moveRight()
+        currentPiece.moveRight()
         keyDelay = secondaryKeyDelayThreshould
     elseif love.keyboard.isDown("down") and keyDelayPassed(dt) then
         if currentPiece.canFallFurther() then
-			currentPiece.fall()
+            currentPiece.fall()
             timeSinceLastDrop = 0
             keyDelay = secondaryKeyDelayThreshould
         else
@@ -66,7 +66,7 @@ function love.update(dt)
         end
     end
 
-	updateCurrentPiece(dt)
+    updateCurrentPiece(dt)
     updateShadow()
 
 end
@@ -83,7 +83,7 @@ function updateCurrentPiece(dt)
 
     if timeSinceLastDrop >= CONFIG.velocityOfLevels[level] then
         if currentPiece.canFallFurther() then
-			currentPiece.fall()
+            currentPiece.fall()
         else
             consolidatePieceAndDoEverythingElse()
         end
@@ -92,32 +92,32 @@ function updateCurrentPiece(dt)
 end
 
 function updateShadow()
-	shadowPiece = currentPiece.copy()
-	shadowPiece.setShadow()
-	shadowPiece.drop()
+    shadowPiece = currentPiece.copy()
+    shadowPiece.setShadow()
+    shadowPiece.drop()
 end
 
 function consolidatePieceAndDoEverythingElse()
-	currentPiece.consolidate()
-	local clearedLines = bottle.getClearedLines()
-	if #clearedLines > 0 then
-		points = points + CONFIG.tableOfPoints[#clearedLines]
-		totalLinesCleared = totalLinesCleared + #clearedLines
-		if totalLinesCleared >= CONFIG.linesClearedToPassLevels[level] then
-			level = level + 1
-		end
-		bottle.removeCompletedLines()
-	end
+    currentPiece.consolidate()
+    local clearedLines = bottle.getClearedLines()
+    if #clearedLines > 0 then
+        points = points + CONFIG.tableOfPoints[#clearedLines]
+        totalLinesCleared = totalLinesCleared + #clearedLines
+        if totalLinesCleared >= CONFIG.linesClearedToPassLevels[level] then
+            level = level + 1
+        end
+        bottle.removeCompletedLines()
+    end
     throwNextPiece()
     --~ if isPieceConflicting(currentPiece) then
-		--~ currentPiece.consolidate()
+        --~ currentPiece.consolidate()
         --~ -- show game over animation
         --~ gameState = gameStates.GAMEOVER
     --~ end
 end
 
 function throwNextPiece()
-	currentPiece = Piece(nextPiece, 1, 4, 0, bottle.getBottle())
+    currentPiece = Piece(nextPiece, 1, 4, 0, bottle.getBottle())
     nextPiece = math.random(1, 7)
 end
 
@@ -130,21 +130,21 @@ function love.keypressed(key)
     if key == "escape" then
         love.event.push("quit")
     elseif key == "left" and currentPiece.canMoveLeft() then
-		currentPiece.moveLeft()
+        currentPiece.moveLeft()
         startKeyDelay()
     elseif key == "right" and currentPiece.canMoveRight() then
-		currentPiece.moveRight()
+        currentPiece.moveRight()
         startKeyDelay()
     elseif key == "down" then
         if currentPiece.canFallFurther() then
-			currentPiece.fall()
+            currentPiece.fall()
             timeSinceLastDrop = 0
             startKeyDelay()
         else
             consolidatePieceAndDoEverythingElse()
         end
     elseif key == "up" then
-		currentPiece.drop()
+        currentPiece.drop()
         consolidatePieceAndDoEverythingElse()
     elseif key == "z" and currentPiece.canRotateCounterclockwise() then
         currentPiece.rotateCounterclockwise()
@@ -155,8 +155,8 @@ end
 
 function love.draw(dt)
     if gameState == gameStates.GAME then
-		drawHud()
-		bottle.draw()
+        drawHud()
+        bottle.draw()
         shadowPiece.draw()
         currentPiece.draw()
     elseif gameState == gameStates.GAMEOVER then

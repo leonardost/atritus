@@ -12,9 +12,9 @@ function Piece(type, rotation, x, y, bottle)
     local bottle = bottle
     local isShadow = false
 
-	function self.setShadow()
-		isShadow = true
-	end
+    function self.setShadow()
+        isShadow = true
+    end
 
     function self.moveLeft()
         position.x = position.x - 1
@@ -80,7 +80,7 @@ function Piece(type, rotation, x, y, bottle)
         self.moveRight()
         return canMove
     end
-    
+
     function self.canMoveRight()
         self.moveRight()
         canMove = not isConflicting()
@@ -122,10 +122,10 @@ function Piece(type, rotation, x, y, bottle)
     function self.draw(screenx, screeny)
         local color = pieces[type].color
         if not isShadow then
-			love.graphics.setColor(color[1], color[2], color[3])
-		else
-			love.graphics.setColor(80, 80, 80)
-		end
+            love.graphics.setColor(color[1], color[2], color[3])
+        else
+            love.graphics.setColor(80, 80, 80)
+        end
         for i = 0, 3 do
             for j = 0, 3 do
                 local x = (position.x + j) * 10
@@ -138,5 +138,5 @@ function Piece(type, rotation, x, y, bottle)
     end
 
     return self
-    
+
 end

@@ -1,9 +1,9 @@
 function Game()
 
-	local self = {}
-	
-	
-	
-	return self
+    local self = {}
+
+
+
+    return self
 
 end
