@@ -1,4 +1,4 @@
-local pieces = require('pieces')
+local pieces = require('src/pieces')
 
 function Piece(type, rotation, x, y, bottle)
 
@@ -56,7 +56,7 @@ function Piece(type, rotation, x, y, bottle)
         end
     end
 
-    local function isConflicting()
+    function self.isConflicting()
         for i = 0, 3 do
             for j = 0, 3 do
                 local x = position.x + j + 1
@@ -76,35 +76,35 @@ function Piece(type, rotation, x, y, bottle)
 
     function self.canMoveLeft()
         self.moveLeft()
-        canMove = not isConflicting()
+        canMove = not self.isConflicting()
         self.moveRight()
         return canMove
     end
 
     function self.canMoveRight()
         self.moveRight()
-        canMove = not isConflicting()
+        canMove = not self.isConflicting()
         self.moveLeft()
         return canMove
     end
 
     function self.canFallFurther(piece)
         self.fall()
-        canMove = not isConflicting()
+        canMove = not self.isConflicting()
         self.rise()
         return canMove
     end
 
     function self.canRotateCounterclockwise()
         self.rotateCounterclockwise()
-        canMove = not isConflicting()
+        canMove = not self.isConflicting()
         self.rotateClockwise()
         return canMove
     end
 
     function self.canRotateClockwise()
         self.rotateClockwise()
-        canMove = not isConflicting()
+        canMove = not self.isConflicting()
         self.rotateCounterclockwise()
         return canMove
     end
