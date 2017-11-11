@@ -1,7 +1,6 @@
 --[[
     Features to implement:
     - Improve visuals
-      - Show next piece that's going to fall
       - Line clearing effect
       - Backgrounds
       - Music and SFX
@@ -19,6 +18,8 @@ require('src/Config')
 require('src/Game')
 require('src/Bottle')
 require('src/Piece')
+
+local game
 
 function love.load()
     math.randomseed(os.time())

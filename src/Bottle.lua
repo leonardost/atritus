@@ -1,3 +1,13 @@
+local colors = {
+    { 0, 0, 255 },
+    { 255, 0, 0 },
+    { 0, 255, 0 },
+    { 255, 255, 0 },
+    { 0, 255, 255 },
+    { 255, 0, 255 },
+    { 255, 255, 255 }
+}
+
 function Bottle()
 
     local self = {}
@@ -67,12 +77,13 @@ function Bottle()
     end
 
     local function drawBlocks()
-        love.graphics.setColor(255, 255, 255)
         for i = 0, CONFIG.BOTTLE_HEIGHT - 1 do
             for j = 0, CONFIG.BOTTLE_WIDTH - 1 do
                 local x = 10 + j * 10
                 local y = 10 + i * 10
                 if bottle[i + 1][j + 1] ~= 0 then
+                    local color = colors[bottle[i + 1][j + 1]]
+                    love.graphics.setColor(color)
                     love.graphics.rectangle("fill", x, y, 10, 10)
                 end
             end

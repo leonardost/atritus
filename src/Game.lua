@@ -8,11 +8,10 @@ function Game()
 
     local self = {}
 
-    local state = GAME_STATES.GAME
+    local state = GAME_STATES.TITLE
     local keyDelay = 0
     local keyDelayThreshold = 0.3
     local secondaryKeyDelayThreshould = 0.02
-    local nextPiece = math.random(1, 7)
 
     local level = 1
     local points = 0
@@ -21,6 +20,7 @@ function Game()
 
     local bottle = Bottle()
     local currentPiece = Piece(math.random(1, 7), 1, 4, 0, bottle.getBottle())
+    local nextPiece = Piece(math.random(1, 7), 1, 4, 0, bottle.getBottle())
     local shadowPiece = currentPiece.copy()
     shadowPiece.setShadow()
 
@@ -63,9 +63,8 @@ function Game()
     end
 
     function throwNextPiece()
-        currentPiece = Piece(nextPiece, 1, 4, 0, bottle.getBottle())
-        -- nextPiece = math.random(1, 7)
-        nextPiece = 1
+        currentPiece = nextPiece.copy()
+        nextPiece = Piece(math.random(1, 7), 1, 4, 0, bottle.getBottle())
     end
 
     local function keyDelayPassed(dt)
@@ -106,6 +105,12 @@ function Game()
     end
 
     function self.keyPressed(key)
+
+        if state == GAME_STATES.TITLE then
+            state = GAME_STATES.GAME
+            return
+        end
+
         if key == "left" and currentPiece.canMoveLeft() then
             currentPiece.moveLeft()
             startKeyDelay()
@@ -130,21 +135,33 @@ function Game()
         end
     end
 
-    local function drawHud()
+    local function drawTitle()
         love.graphics.setColor(255, 255, 255)
-        love.graphics.print("Level " .. level, 180, 10)
-        love.graphics.print("Next: " .. nextPiece, 180, 25)
-        love.graphics.print("Points: " .. points, 180, 40)
-        love.graphics.print("Lines cleared: " .. totalLinesCleared, 180, 55)
+        love.graphics.rectangle("line", 100, 30, 150, 30)
+        love.graphics.print("ATRITUS", 140, 40)
+        love.graphics.print(CONFIG.VERSION, 160, 190)
+    end
+
+    local function drawHud()
+        nextPiece.draw(110, 45)
+        love.graphics.setColor(255, 255, 255)
+        love.graphics.rectangle("line", 140, 30, 60, 50)
+        love.graphics.print("Next", 140, 10)
+        love.graphics.print("Level " .. level, 140, 105)
+        love.graphics.print("Points: " .. points, 140, 120)
+        love.graphics.print("Lines cleared: " .. totalLinesCleared, 140, 135)
     end
 
     function self.draw()
-        if state == GAME_STATES.GAME then
+        if state == GAME_STATES.TITLE then
+            drawTitle()
+        elseif state == GAME_STATES.GAME then
             drawHud()
             bottle.draw()
-            shadowPiece.draw()
-            currentPiece.draw()
+            shadowPiece.draw(10, 10)
+            currentPiece.draw(10, 10)
         elseif state == GAME_STATES.GAMEOVER then
+            love.graphics.setColor(255, 255, 255)
             love.graphics.print("GAME OVER", 125, 100)
             love.graphics.print("HIGH SCORE", 120, 140)
             love.graphics.print(points, 160, 160)

@@ -113,7 +113,7 @@ function Piece(type, rotation, x, y, bottle)
         for i = 0, 3 do
             for j = 0, 3 do
                 if pieces[type].blocks[rotation][i * 4 + j + 1] == 1 then
-                    bottle[position.y + i + 1][position.x + j + 1] = 1
+                    bottle[position.y + i + 1][position.x + j + 1] = type
                 end
             end
         end
@@ -131,7 +131,7 @@ function Piece(type, rotation, x, y, bottle)
                 local x = (position.x + j) * 10
                 local y = (position.y + i) * 10
                 if pieces[type].blocks[rotation][i * 4 + j + 1] == 1 then
-                    love.graphics.rectangle("line", 10 + x, 10 + y, 10, 10)
+                    love.graphics.rectangle("line", screenx + x, screeny + y, 10, 10)
                 end
             end
         end
