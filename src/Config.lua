@@ -1,6 +1,16 @@
 CONFIG = {}
 
 CONFIG.VERSION = "v0.1.0"
+CONFIG.scale = 2
+CONFIG.COLORS = {
+    { 0, 0, 255 },
+    { 255, 0, 0 },
+    { 0, 255, 0 },
+    { 255, 255, 0 },
+    { 0, 255, 255 },
+    { 255, 0, 255 },
+    { 255, 255, 255 }
+}
 
 -- bottle size
 CONFIG.BOTTLE_WIDTH = 10

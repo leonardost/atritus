@@ -24,7 +24,7 @@ local game
 function love.load()
     math.randomseed(os.time())
     love.window.setTitle("Atritus")
-    love.window.setMode(320, 240, { centered = true })
+    love.window.setMode(320 * CONFIG.scale, 240 * CONFIG.scale, { centered = true })
     game = Game()
 end
 
@@ -35,11 +35,23 @@ end
 function love.keypressed(key)
     if key == "escape" then
         love.event.push("quit")
+    elseif key == "1" then
+        CONFIG.scale = 1
+        love.window.setMode(320 * CONFIG.scale, 240 * CONFIG.scale, { centered = true })
+    elseif key == "2" then
+        CONFIG.scale = 2
+        love.window.setMode(320 * CONFIG.scale, 240 * CONFIG.scale, { centered = true })
+    elseif key == "3" then
+        CONFIG.scale = 3
+        love.window.setMode(320 * CONFIG.scale, 240 * CONFIG.scale, { centered = true })
     else
         game.keyPressed(key)
     end
 end
 
 function love.draw(dt)
+    love.graphics.push()
+    love.graphics.scale(CONFIG.scale, CONFIG.scale)
     game.draw()
+    love.graphics.pop()
 end

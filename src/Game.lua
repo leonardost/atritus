@@ -16,7 +16,6 @@ function Game()
     local level = 1
     local points = 0
     local totalLinesCleared = 0
-    local timeSinceLastDrop = 0
 
     local bottle = Bottle()
     local currentPiece = Piece(math.random(1, 7), 1, 4, 0, bottle.getBottle())
@@ -24,36 +23,25 @@ function Game()
     local shadowPiece = currentPiece.copy()
     shadowPiece.setShadow()
 
-    local function updateCurrentPiece(dt)
-        timeSinceLastDrop = timeSinceLastDrop + dt
-
-        if timeSinceLastDrop >= CONFIG.velocityOfLevels[level] then
-            if currentPiece.canFallFurther() then
-                currentPiece.fall()
-            else
-                consolidatePieceAndDoEverythingElse()
-            end
-            timeSinceLastDrop = 0
-        end
-    end
-
     local function updateShadow()
         shadowPiece = currentPiece.copy()
         shadowPiece.setShadow()
         shadowPiece.drop()
     end
 
-    function consolidatePieceAndDoEverythingElse()
-        currentPiece.consolidate()
-        local clearedLines = bottle.getClearedLines()
+    local function updatePointsAndLevel(clearedLines)
         if #clearedLines > 0 then
             points = points + CONFIG.tableOfPoints[#clearedLines]
             totalLinesCleared = totalLinesCleared + #clearedLines
-            if totalLinesCleared >= CONFIG.linesClearedToPassLevels[level] then
+            if totalLinesCleared >= CONFIG.linesClearedToPassLevels[level] and level < #CONFIG.linesClearedToPassLevels then
                 level = level + 1
             end
-            bottle.removeCompletedLines()
         end
+    end
+
+    function consolidatePieceAndDoEverythingElse()
+        local clearedLines = bottle.update()
+        updatePointsAndLevel(clearedLines)
         throwNextPiece()
         if currentPiece.isConflicting() then
             currentPiece.consolidate()
@@ -85,14 +73,16 @@ function Game()
             elseif love.keyboard.isDown("down") and keyDelayPassed(dt) then
                 if currentPiece.canFallFurther() then
                     currentPiece.fall()
-                    timeSinceLastDrop = 0
                     keyDelay = secondaryKeyDelayThreshould
                 else
+                    currentPiece.consolidate()
                     consolidatePieceAndDoEverythingElse()
                 end
             end
 
-            updateCurrentPiece(dt)
+            if currentPiece.update(dt, level) == 1 then
+                consolidatePieceAndDoEverythingElse()
+            end
             updateShadow()
         elseif state == GAME_STATES.GAMEOVER then
 
@@ -120,9 +110,9 @@ function Game()
         elseif key == "down" then
             if currentPiece.canFallFurther() then
                 currentPiece.fall()
-                timeSinceLastDrop = 0
                 startKeyDelay()
             else
+                currentPiece.consolidate()
                 consolidatePieceAndDoEverythingElse()
             end
         elseif key == "up" then

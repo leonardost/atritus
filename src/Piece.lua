@@ -11,6 +11,7 @@ function Piece(type, rotation, x, y, bottle)
     }
     local bottle = bottle
     local isShadow = false
+    local timeSinceLastDrop = 0
 
     function self.setShadow()
         isShadow = true
@@ -26,15 +27,16 @@ function Piece(type, rotation, x, y, bottle)
 
     function self.fall()
         position.y = position.y + 1
-    end
-
-    function self.rise()
-        position.y = position.y - 1
+        timeSinceLastDrop = 0
     end
 
     function self.drop()
         while self.canFallFurther() do
             self.fall()
+        end
+        if not isShadow then
+            self.consolidate()
+            timeSinceLastDrop = 0
         end
     end
 
@@ -75,38 +77,33 @@ function Piece(type, rotation, x, y, bottle)
     end
 
     function self.canMoveLeft()
-        self.moveLeft()
-        canMove = not self.isConflicting()
-        self.moveRight()
-        return canMove
+        local newPiece = self.copy()
+        newPiece.moveLeft()
+        return not newPiece.isConflicting()
     end
 
     function self.canMoveRight()
-        self.moveRight()
-        canMove = not self.isConflicting()
-        self.moveLeft()
-        return canMove
+        local newPiece = self.copy()
+        newPiece.moveRight()
+        return not newPiece.isConflicting()
     end
 
     function self.canFallFurther(piece)
-        self.fall()
-        canMove = not self.isConflicting()
-        self.rise()
-        return canMove
+        local newPiece = self.copy()
+        newPiece.fall()
+        return not newPiece.isConflicting()
     end
 
     function self.canRotateCounterclockwise()
-        self.rotateCounterclockwise()
-        canMove = not self.isConflicting()
-        self.rotateClockwise()
-        return canMove
+        local newPiece = self.copy()
+        newPiece.rotateCounterclockwise()
+        return not newPiece.isConflicting()
     end
 
     function self.canRotateClockwise()
-        self.rotateClockwise()
-        canMove = not self.isConflicting()
-        self.rotateCounterclockwise()
-        return canMove
+        local newPiece = self.copy()
+        newPiece.rotateClockwise()
+        return not newPiece.isConflicting()
     end
 
     function self.consolidate()
@@ -119,10 +116,25 @@ function Piece(type, rotation, x, y, bottle)
         end
     end
 
+    function self.update(dt, level)
+        timeSinceLastDrop = timeSinceLastDrop + dt
+
+        if timeSinceLastDrop >= CONFIG.velocityOfLevels[level] then
+            if self.canFallFurther() then
+                self.fall()
+            else
+                self.consolidate()
+                return 1 -- means the piece was consolidated
+            end
+        end
+
+        return 0
+    end
+
     function self.draw(screenx, screeny)
         local color = pieces[type].color
         if not isShadow then
-            love.graphics.setColor(color[1], color[2], color[3])
+            love.graphics.setColor(color)
         else
             love.graphics.setColor(80, 80, 80)
         end

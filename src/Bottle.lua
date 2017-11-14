@@ -1,13 +1,3 @@
-local colors = {
-    { 0, 0, 255 },
-    { 255, 0, 0 },
-    { 0, 255, 0 },
-    { 255, 255, 0 },
-    { 0, 255, 255 },
-    { 255, 0, 255 },
-    { 255, 255, 255 }
-}
-
 function Bottle()
 
     local self = {}
@@ -33,7 +23,7 @@ function Bottle()
         return true
     end
 
-    function self.getClearedLines()
+    local function getClearedLines()
         clearedLines = {}
         for i = 1, CONFIG.BOTTLE_HEIGHT do
             if isCompleteLine(i) then
@@ -49,23 +39,27 @@ function Bottle()
                 bottle[i][j] = bottle[i - 1][j]
             end
         end
+    end
+
+    local function removeCompletedLines()
+        local clearedLines = getClearedLines()
+        -- the line offset compensates the lines that fall down
+        local lineOffset = 0
+        for i = #clearedLines, 1, -1 do
+            dropLine(clearedLines[i] + lineOffset)
+            lineOffset = lineOffset + 1
+        end
         for j = 1, CONFIG.BOTTLE_WIDTH do
             bottle[1][j] = 0
         end
     end
 
-    local function reorganizeLines(clearedLines)
-        -- the line offset compensates the lines that fall down
-        lineOffset = 0
-        for i = #clearedLines, 1, -1 do
-            dropLine(clearedLines[i] + lineOffset)
-            lineOffset = lineOffset + 1
+    function self.update()
+        local clearedLines = getClearedLines()
+        if #clearedLines > 0 then
+            removeCompletedLines()
         end
-    end
-
-    function self.removeCompletedLines()
-        clearedLines = self.getClearedLines()
-        reorganizeLines(clearedLines)
+        return clearedLines
     end
 
     local function drawBottle()
@@ -73,6 +67,7 @@ function Bottle()
         y = 10 - 1
         w = CONFIG.BOTTLE_WIDTH * 10 + 2
         h = CONFIG.BOTTLE_HEIGHT * 10 + 2
+        love.graphics.setColor(255, 255, 255)
         love.graphics.rectangle("line", x, y, w, h)
     end
 
@@ -82,7 +77,7 @@ function Bottle()
                 local x = 10 + j * 10
                 local y = 10 + i * 10
                 if bottle[i + 1][j + 1] ~= 0 then
-                    local color = colors[bottle[i + 1][j + 1]]
+                    local color = CONFIG.COLORS[bottle[i + 1][j + 1]]
                     love.graphics.setColor(color)
                     love.graphics.rectangle("fill", x, y, 10, 10)
                 end

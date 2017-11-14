@@ -2,7 +2,7 @@ local pieces = {}
 
 -- I
 pieces[1] = {
-    color = { 0, 0, 255 },
+    color = CONFIG.COLORS[1],
     blocks = {
         { 1, 1, 1, 1,
           0, 0, 0, 0,
@@ -24,7 +24,7 @@ pieces[1] = {
 }
 -- Z
 pieces[2] = {
-    color = { 255, 0, 0 },
+    color = CONFIG.COLORS[2],
     blocks = {
         { 1, 1, 0, 0,
           0, 1, 1, 0,
@@ -46,7 +46,7 @@ pieces[2] = {
 }
 -- S
 pieces[3] = {
-    color = { 0, 255, 0 },
+    color = CONFIG.COLORS[3],
     blocks = {
         { 0, 1, 1, 0,
           1, 1, 0, 0,
@@ -68,7 +68,7 @@ pieces[3] = {
 }
 -- L invertido
 pieces[4] = {
-    color = { 255, 255, 0 },
+    color = CONFIG.COLORS[4],
     blocks = {
         { 1, 0, 0, 0,
           1, 1, 1, 0,
@@ -90,7 +90,7 @@ pieces[4] = {
 }
 -- L
 pieces[5] = {
-    color = { 0, 255, 255 },
+    color = CONFIG.COLORS[5],
     blocks = {
         { 0, 0, 1, 0,
           1, 1, 1, 0,
@@ -112,7 +112,7 @@ pieces[5] = {
 }
 -- T
 pieces[6] = {
-    color = { 255, 0, 255 },
+    color = CONFIG.COLORS[6],
     blocks = {
         { 0, 1, 0, 0,
           1, 1, 1, 0,
@@ -134,7 +134,7 @@ pieces[6] = {
 }
 -- O
 pieces[7] = {
-    color = { 255, 255, 255 },
+    color = CONFIG.COLORS[7],
     blocks = {
         { 1, 1, 0, 0,
           1, 1, 0, 0,
