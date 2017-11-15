@@ -18,8 +18,15 @@ function Game()
     local totalLinesCleared = 0
 
     local bottle = Bottle()
-    local currentPiece = Piece(math.random(1, 7), 1, 4, 0, bottle.getBottle())
-    local nextPiece = Piece(math.random(1, 7), 1, 4, 0, bottle.getBottle())
+    local currentPiece = {}
+    local nextPiece = {}
+    if CONFIG.debug then
+        currentPiece = Piece(CONFIG.nextPiece, 1, CONFIG.startingX, CONFIG.startingY, bottle.getBottle())
+        nextPiece = Piece(CONFIG.nextPiece, 1, CONFIG.startingX, CONFIG.startingY, bottle.getBottle())
+    else
+        currentPiece = Piece(math.random(1, 7), 1, 4, 0, bottle.getBottle())
+        nextPiece = Piece(math.random(1, 7), 1, 4, 0, bottle.getBottle())
+    end
     local shadowPiece = currentPiece.copy()
     shadowPiece.setShadow()
 
@@ -52,7 +59,11 @@ function Game()
 
     function throwNextPiece()
         currentPiece = nextPiece.copy()
-        nextPiece = Piece(math.random(1, 7), 1, 4, 0, bottle.getBottle())
+        if CONFIG.debug then
+            nextPiece = Piece(CONFIG.nextPiece, 1, CONFIG.startingX, CONFIG.startingY, bottle.getBottle())
+        else
+            nextPiece = Piece(math.random(1, 7), 1, 4, 0, bottle.getBottle())
+        end
     end
 
     local function keyDelayPassed(dt)
@@ -118,10 +129,40 @@ function Game()
         elseif key == "up" then
             currentPiece.drop()
             consolidatePieceAndDoEverythingElse()
-        elseif key == "z" and currentPiece.canRotateCounterclockwise() then
-            currentPiece.rotateCounterclockwise()
-        elseif key == "x" and currentPiece.canRotateClockwise() then
-            currentPiece.rotateClockwise()
+        elseif key == "z" then
+            if currentPiece.canRotateCounterclockwise() then
+                currentPiece.rotateCounterclockwise()
+            else
+                local offsetl, offsetr = currentPiece.canRotateCounterclockwiseWithLeniency()
+                if offsetl > 0 then
+                    currentPiece.rotateCounterclockwise()
+                    for i = 1, offsetl do
+                        currentPiece.moveLeft()
+                    end
+                elseif offsetr > 0 then
+                    currentPiece.rotateCounterclockwise()
+                    for i = 1, offsetr do
+                        currentPiece.moveRight()
+                    end
+                end
+            end
+        elseif key == "x" then
+            if currentPiece.canRotateClockwise() then
+                currentPiece.rotateClockwise()
+            else
+                local offsetl, offsetr = currentPiece.canRotateClockwiseWithLeniency()
+                if offsetl > 0 then
+                    currentPiece.rotateClockwise()
+                    for i = 1, offsetl do
+                        currentPiece.moveLeft()
+                    end
+                elseif offsetr > 0 then
+                    currentPiece.rotateClockwise()
+                    for i = 1, offsetr do
+                        currentPiece.moveRight()
+                    end
+                end
+            end
         end
     end
 

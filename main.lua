@@ -5,8 +5,6 @@
       - Backgrounds
       - Music and SFX
     - Improve gameplay
-      - When rotating, give pieces some leniency to accomodate themselves
-      - Create title screen
       - Create options screen
         - BGM volume, SFX volume
         - Toggle shadow piece on/off

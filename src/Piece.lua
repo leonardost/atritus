@@ -100,10 +100,58 @@ function Piece(type, rotation, x, y, bottle)
         return not newPiece.isConflicting()
     end
 
+    function self.canRotateCounterclockwiseWithLeniency()
+        for i = 1, 3 do
+            local newPiece = self.copy()
+            newPiece.rotateCounterclockwise()
+            for j = 1, i do
+                newPiece.moveLeft()
+            end
+            if not newPiece.isConflicting() then
+                return i, 0
+            end
+        end
+        for i = 1, 3 do
+            local newPiece = self.copy()
+            newPiece.rotateCounterclockwise()
+            for j = 1, i do
+                newPiece.moveRight()
+            end
+            if not newPiece.isConflicting() then
+                return 0, i
+            end
+        end
+        return 0, 0
+    end
+
     function self.canRotateClockwise()
         local newPiece = self.copy()
         newPiece.rotateClockwise()
         return not newPiece.isConflicting()
+    end
+
+    function self.canRotateClockwiseWithLeniency()
+        for i = 1, 3 do
+            local newPiece = self.copy()
+            newPiece.rotateClockwise()
+            for j = 1, i do
+                newPiece.moveLeft()
+            end
+            if not newPiece.isConflicting() then
+                return i, 0
+            end
+        end
+        for i = 1, 3 do
+            local newPiece = self.copy()
+            newPiece.rotateClockwise()
+            for j = 1, i do
+                newPiece.moveRight()
+            end
+            if not newPiece.isConflicting() then
+                return 0, i
+            end
+        end
+        return 0, 0
     end
 
     function self.consolidate()
