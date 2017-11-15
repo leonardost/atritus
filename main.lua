@@ -8,8 +8,6 @@
       - Create options screen
         - BGM volume, SFX volume
         - Toggle shadow piece on/off
-    - Improve code
-      - Organize code in objects
 --]]
 
 require('src/Config')

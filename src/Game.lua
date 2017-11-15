@@ -9,6 +9,8 @@ function Game()
     local self = {}
 
     local state = GAME_STATES.TITLE
+    local shouldDrawPress = true
+    local timeSinceLastDrawPressChange = 0
     local keyDelay = 0
     local keyDelayThreshold = 0.3
     local secondaryKeyDelayThreshould = 0.02
@@ -74,7 +76,13 @@ function Game()
     end
 
     function self.update(dt)
-        if state == GAME_STATES.GAME then
+        if state == GAME_STATES.TITLE then
+            timeSinceLastDrawPressChange = timeSinceLastDrawPressChange + dt
+            if timeSinceLastDrawPressChange > 0.5 then
+                shouldDrawPress = not shouldDrawPress
+                timeSinceLastDrawPressChange = 0
+            end
+        elseif state == GAME_STATES.GAME then
             if love.keyboard.isDown("left") and currentPiece.canMoveLeft() and keyDelayPassed(dt) then
                 currentPiece.moveLeft()
                 keyDelay = secondaryKeyDelayThreshould
@@ -95,7 +103,7 @@ function Game()
                 consolidatePieceAndDoEverythingElse()
             end
             updateShadow()
-        elseif state == GAME_STATES.GAMEOVER then
+        elseif state == GAME_STATES.GAMEOVERGAMEOVER then
 
         end
     end
@@ -168,9 +176,12 @@ function Game()
 
     local function drawTitle()
         love.graphics.setColor(255, 255, 255)
-        love.graphics.rectangle("line", 100, 30, 150, 30)
-        love.graphics.print("ATRITUS", 140, 40)
-        love.graphics.print(CONFIG.VERSION, 160, 190)
+        love.graphics.rectangle("line", 130, 30, 60, 30)
+        love.graphics.printf("ATRITUS", 0, 40, 320, "center")
+        if shouldDrawPress then
+            love.graphics.printf("Press any key to start", 0, 110, 320, "center")
+        end
+        love.graphics.printf(CONFIG.VERSION, 0, 190, 320, "center")
     end
 
     local function drawHud()
@@ -193,9 +204,9 @@ function Game()
             currentPiece.draw(10, 10)
         elseif state == GAME_STATES.GAMEOVER then
             love.graphics.setColor(255, 255, 255)
-            love.graphics.print("GAME OVER", 125, 100)
-            love.graphics.print("HIGH SCORE", 120, 140)
-            love.graphics.print(points, 160, 160)
+            love.graphics.printf("GAME OVER", 0, 100, 320, "center")
+            love.graphics.printf("HIGH SCORE", 0, 140, 320, "center")
+            love.graphics.printf(points, 0, 160, 320, "center")
         end
     end
 
