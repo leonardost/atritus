@@ -22,6 +22,9 @@ function Game()
     local bottle = Bottle()
     local currentPiece = {}
     local nextPiece = {}
+    local holdPiece = {}
+    local heldPiece = false
+    local isHoldEmpty = true
     if CONFIG.debug then
         currentPiece = Piece(CONFIG.nextPiece, 1, CONFIG.startingX, CONFIG.startingY, bottle.getBottle())
         nextPiece = Piece(CONFIG.nextPiece, 1, CONFIG.startingX, CONFIG.startingY, bottle.getBottle())
@@ -57,6 +60,7 @@ function Game()
             -- show game over animation
             state = GAME_STATES.GAMEOVER
         end
+        heldPiece = false
     end
 
     function throwNextPiece()
@@ -171,6 +175,17 @@ function Game()
                     end
                 end
             end
+        elseif key == "c" and not heldPiece then -- hold
+            if isHoldEmpty then
+                holdPiece = currentPiece.hold()
+                throwNextPiece()
+                isHoldEmpty = false
+            else
+                local tempPiece = holdPiece
+                holdPiece = currentPiece.hold()
+                currentPiece = tempPiece
+            end
+            heldPiece = true
         end
     end
 
@@ -186,12 +201,17 @@ function Game()
 
     local function drawHud()
         nextPiece.draw(110, 45)
+        if not isHoldEmpty then
+            holdPiece.draw(110, 125)
+        end
         love.graphics.setColor(255, 255, 255)
-        love.graphics.rectangle("line", 140, 30, 60, 50)
         love.graphics.print("Next", 140, 10)
-        love.graphics.print("Level " .. level, 140, 105)
-        love.graphics.print("Points: " .. points, 140, 120)
-        love.graphics.print("Lines cleared: " .. totalLinesCleared, 140, 135)
+        love.graphics.rectangle("line", 140, 30, 60, 50)
+        love.graphics.print("Hold", 140, 90)
+        love.graphics.rectangle("line", 140, 110, 60, 50)
+        love.graphics.print("Level " .. level, 140, 170)
+        love.graphics.print("Points: " .. points, 140, 185)
+        love.graphics.print("Lines cleared: " .. totalLinesCleared, 140, 200)
     end
 
     function self.draw()

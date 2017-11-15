@@ -13,6 +13,14 @@ function Piece(type, rotation, x, y, bottle)
     local isShadow = false
     local timeSinceLastDrop = 0
 
+    function self.setX(x)
+        position.x = x
+    end
+
+    function self.setY(y)
+        position.y = y
+    end
+
     function self.setShadow()
         isShadow = true
     end
@@ -42,6 +50,11 @@ function Piece(type, rotation, x, y, bottle)
 
     function self.copy()
         return Piece(type, rotation, position.x, position.y, bottle)
+    end
+
+    -- puts this piece on hold, resetting its position
+    function self.hold()
+        return Piece(type, 1, 4, 0, bottle)
     end
 
     function self.rotateCounterclockwise()

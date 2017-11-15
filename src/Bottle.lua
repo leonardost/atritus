@@ -10,6 +10,7 @@ function Bottle()
         end
     end
 
+    -- sets bottle for debugging
     -- bottle = {
     --     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     --     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
