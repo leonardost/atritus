@@ -1,6 +1,6 @@
 CONFIG = {}
 
-CONFIG.VERSION = "v0.1.0"
+CONFIG.VERSION = "v1.0.0"
 CONFIG.scale = 2
 CONFIG.COLORS = {
     { 0, 0, 255 },
@@ -18,8 +18,8 @@ CONFIG.BOTTLE_HEIGHT = 21
 
 -- game configuration
 CONFIG.tableOfPoints = { 10, 25, 75, 200 }
-CONFIG.linesClearedToPassLevels = { 10, 20, 30, 40, 50 }
-CONFIG.velocityOfLevels = { 1, 0.5, 0.3, 0.1, 0.07 }
+CONFIG.linesClearedToPassLevels = { 10, 20, 30, 40, 50, 60, 70, 80 }
+CONFIG.velocityOfLevels = { 1, 0.8, 0.6, 0.3, 0.1, 0.08, 0.06, 0.05 }
 
 CONFIG.debug = false
 CONFIG.nextPiece = 1
