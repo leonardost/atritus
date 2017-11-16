@@ -1,12 +1,22 @@
 function Bottle()
 
+    local STATES = {
+        ACTIVE = 1,
+        CLEARING_LINES = 2,
+        THROW_NEXT_PIECE = 3
+    }
+
     local self = {}
     local bottle = {}
+    local state = STATES.ACTIVE
+    local timeInLineClearingState = 0
+    local BLINKING_STATE_TIME = 1
+    local clearedLines = {}
 
     for i = 1, CONFIG.BOTTLE_HEIGHT do
         bottle[i] = {}
         for j = 1, CONFIG.BOTTLE_WIDTH do
-            bottle[i][j] = 0
+            bottle[i][j] = Block(10 + j * 10, 10 + i * 10, 1, 3)
         end
     end
 
@@ -39,16 +49,50 @@ function Bottle()
         return bottle
     end
 
+    function self.setActive()
+        state = STATES.ACTIVE
+    end
+
+    function self.isActive()
+        return state == STATES.ACTIVE
+    end
+
+    function self.setClearingLines()
+        state = STATES.CLEARING_LINES
+        timeInLineClearingState = 0
+
+        clearedLines = self.getClearedLines()
+        if #clearedLines > 0 then
+            for i = 1, #clearedLines do
+                for j = 1, CONFIG.BOTTLE_WIDTH do
+                    bottle[clearedLines[i]][j].enterBlinkingState()
+                end
+            end
+        end
+    end
+
+    function self.isClearingLines()
+        return state == STATES.CLEARING_LINES
+    end
+
+    function self.setThrowNextPiece()
+        state = STATES.THROW_NEXT_PIECE
+    end
+
+    function self.isThrowNextPiece()
+        return state == STATES.THROW_NEXT_PIECE
+    end
+
     local function isCompleteLine(line)
         for i = 1, CONFIG.BOTTLE_WIDTH do
-            if bottle[line][i] == 0 then
+            if not bottle[line][i].isActive() then
                 return false
             end
         end
         return true
     end
 
-    local function getClearedLines()
+    function self.getClearedLines()
         clearedLines = {}
         for i = 1, CONFIG.BOTTLE_HEIGHT do
             if isCompleteLine(i) then
@@ -59,15 +103,17 @@ function Bottle()
     end
 
     local function dropLine(line)
+        print("Dropping line " .. line)
         for i = line, 2, -1 do
             for j = 1, CONFIG.BOTTLE_WIDTH do
-                bottle[i][j] = bottle[i - 1][j]
+                bottle[i][j] = bottle[i - 1][j].copy()
+                bottle[i][j].set(10 + (j - 1) * 10, 10 + (i - 1) * 10)
             end
         end
     end
 
     local function removeCompletedLines()
-        local clearedLines = getClearedLines()
+        -- local clearedLines = getClearedLines()
         -- the line offset compensates the lines that fall down
         local lineOffset = 0
         for i = #clearedLines, 1, -1 do
@@ -75,16 +121,24 @@ function Bottle()
             lineOffset = lineOffset + 1
         end
         for j = 1, CONFIG.BOTTLE_WIDTH do
-            bottle[1][j] = 0
+            bottle[1][j].destroy()
         end
     end
 
-    function self.update()
-        local clearedLines = getClearedLines()
-        if #clearedLines > 0 then
-            removeCompletedLines()
+    function self.update(dt)
+        for i = 1, CONFIG.BOTTLE_HEIGHT do
+            for j = 1, CONFIG.BOTTLE_WIDTH do
+                bottle[i][j].update(dt)
+            end
         end
-        return clearedLines
+
+        if state == STATES.CLEARING_LINES then
+            timeInLineClearingState = timeInLineClearingState + dt
+            if timeInLineClearingState >= BLINKING_STATE_TIME then
+                removeCompletedLines()
+                state = STATES.THROW_NEXT_PIECE
+            end
+        end
     end
 
     local function drawBottle()
@@ -97,15 +151,9 @@ function Bottle()
     end
 
     local function drawBlocks()
-        for i = 0, CONFIG.BOTTLE_HEIGHT - 1 do
-            for j = 0, CONFIG.BOTTLE_WIDTH - 1 do
-                local x = 10 + j * 10
-                local y = 10 + i * 10
-                if bottle[i + 1][j + 1] ~= 0 then
-                    local color = CONFIG.COLORS[bottle[i + 1][j + 1]]
-                    love.graphics.setColor(color)
-                    love.graphics.rectangle("fill", x, y, 10, 10)
-                end
+        for i = 1, CONFIG.BOTTLE_HEIGHT do
+            for j = 1, CONFIG.BOTTLE_WIDTH do
+                bottle[i][j].draw()
             end
         end
     end

@@ -80,7 +80,7 @@ function Piece(type, rotation, x, y, bottle)
                     if x < 1 or x > CONFIG.BOTTLE_WIDTH or y > CONFIG.BOTTLE_HEIGHT then -- out of bounds
                         return true
                     end
-                    if bottle[y][x] ~= 0 then -- bumped on other blocks
+                    if bottle[y][x].isActive() then -- bumped on other blocks
                         return true
                     end
                 end
@@ -171,7 +171,10 @@ function Piece(type, rotation, x, y, bottle)
         for i = 0, 3 do
             for j = 0, 3 do
                 if pieces[type].blocks[rotation][i * 4 + j + 1] == 1 then
-                    bottle[position.y + i + 1][position.x + j + 1] = type
+                    bottle[position.y + i + 1][position.x + j + 1] =
+                        Block(10 + (position.x + j) * 10,
+                              10 + (position.y + i) * 10,
+                              pieces[type].color, 1)
                 end
             end
         end

@@ -1,7 +1,7 @@
 --[[
     Features to implement:
     - Improve visuals
-      - Line clearing effect
+      - Line clearing effect 
       - Backgrounds
       - Music and SFX
     - Improve gameplay
@@ -12,6 +12,7 @@
 
 require('src/Config')
 require('src/Game')
+require('src/Block')
 require('src/Bottle')
 require('src/Piece')
 

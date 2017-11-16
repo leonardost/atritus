@@ -1,10 +1,10 @@
-local GAME_STATES = {
-    TITLE = 1,
-    GAME = 2,
-    GAMEOVER = 3
-}
-
 function Game()
+
+    local GAME_STATES = {
+        TITLE = 1,
+        GAME = 2,
+        GAMEOVER = 3
+    }
 
     local self = {}
 
@@ -52,14 +52,21 @@ function Game()
     end
 
     function consolidatePieceAndDoEverythingElse()
-        local clearedLines = bottle.update()
-        updatePointsAndLevel(clearedLines)
-        throwNextPiece()
-        if currentPiece.isConflicting() then
-            currentPiece.consolidate()
-            -- show game over animation
-            state = GAME_STATES.GAMEOVER
+        local clearedLines = bottle.getClearedLines()
+
+        if #clearedLines > 0 then
+            updatePointsAndLevel(clearedLines)
+            bottle.setClearingLines()
+        else
+            bottle.setThrowNextPiece()
         end
+
+        -- throwNextPiece()
+        -- if currentPiece.isConflicting() then
+        --     currentPiece.consolidate()
+        --     -- show game over animation
+        --     state = GAME_STATES.GAMEOVER
+        -- end
         heldPiece = false
     end
 
@@ -87,27 +94,45 @@ function Game()
                 timeSinceLastDrawPressChange = 0
             end
         elseif state == GAME_STATES.GAME then
-            if love.keyboard.isDown("left") and currentPiece.canMoveLeft() and keyDelayPassed(dt) then
-                currentPiece.moveLeft()
-                keyDelay = secondaryKeyDelayThreshould
-            elseif love.keyboard.isDown("right") and currentPiece.canMoveRight() and keyDelayPassed(dt) then
-                currentPiece.moveRight()
-                keyDelay = secondaryKeyDelayThreshould
-            elseif love.keyboard.isDown("down") and keyDelayPassed(dt) then
-                if currentPiece.canFallFurther() then
-                    currentPiece.fall()
+
+            bottle.update(dt)
+
+            if bottle.isActive() then
+
+                if love.keyboard.isDown("left") and currentPiece.canMoveLeft() and keyDelayPassed(dt) then
+                    currentPiece.moveLeft()
                     keyDelay = secondaryKeyDelayThreshould
-                else
-                    currentPiece.consolidate()
+                elseif love.keyboard.isDown("right") and currentPiece.canMoveRight() and keyDelayPassed(dt) then
+                    currentPiece.moveRight()
+                    keyDelay = secondaryKeyDelayThreshould
+                elseif love.keyboard.isDown("down") and keyDelayPassed(dt) then
+                    if currentPiece.canFallFurther() then
+                        currentPiece.fall()
+                        keyDelay = secondaryKeyDelayThreshould
+                    else
+                        currentPiece.consolidate()
+                        consolidatePieceAndDoEverythingElse()
+                    end
+                end
+
+                if currentPiece.update(dt, level) == 1 then
                     consolidatePieceAndDoEverythingElse()
                 end
+                updateShadow()
+            
+            elseif bottle.isClearingLines() then
+
+            elseif bottle.isThrowNextPiece() then
+                throwNextPiece()
+                if currentPiece.isConflicting() then
+                    currentPiece.consolidate()
+                    -- show game over animation
+                    state = GAME_STATES.GAMEOVER
+                end
+                bottle.setActive()
             end
 
-            if currentPiece.update(dt, level) == 1 then
-                consolidatePieceAndDoEverythingElse()
-            end
-            updateShadow()
-        elseif state == GAME_STATES.GAMEOVERGAMEOVER then
+        elseif state == GAME_STATES.GAMEOVER then
 
         end
     end
@@ -124,68 +149,72 @@ function Game()
             return
         end
 
-        if key == "left" and currentPiece.canMoveLeft() then
-            currentPiece.moveLeft()
-            startKeyDelay()
-        elseif key == "right" and currentPiece.canMoveRight() then
-            currentPiece.moveRight()
-            startKeyDelay()
-        elseif key == "down" then
-            if currentPiece.canFallFurther() then
-                currentPiece.fall()
+        if bottle.isActive() then
+
+            if key == "left" and currentPiece.canMoveLeft() then
+                currentPiece.moveLeft()
                 startKeyDelay()
-            else
-                currentPiece.consolidate()
+            elseif key == "right" and currentPiece.canMoveRight() then
+                currentPiece.moveRight()
+                startKeyDelay()
+            elseif key == "down" then
+                if currentPiece.canFallFurther() then
+                    currentPiece.fall()
+                    startKeyDelay()
+                else
+                    currentPiece.consolidate()
+                    consolidatePieceAndDoEverythingElse()
+                end
+            elseif key == "up" then
+                currentPiece.drop()
                 consolidatePieceAndDoEverythingElse()
-            end
-        elseif key == "up" then
-            currentPiece.drop()
-            consolidatePieceAndDoEverythingElse()
-        elseif key == "z" then
-            if currentPiece.canRotateCounterclockwise() then
-                currentPiece.rotateCounterclockwise()
-            else
-                local offsetl, offsetr = currentPiece.canRotateCounterclockwiseWithLeniency()
-                if offsetl > 0 then
+            elseif key == "z" then
+                if currentPiece.canRotateCounterclockwise() then
                     currentPiece.rotateCounterclockwise()
-                    for i = 1, offsetl do
-                        currentPiece.moveLeft()
-                    end
-                elseif offsetr > 0 then
-                    currentPiece.rotateCounterclockwise()
-                    for i = 1, offsetr do
-                        currentPiece.moveRight()
+                else
+                    local offsetl, offsetr = currentPiece.canRotateCounterclockwiseWithLeniency()
+                    if offsetl > 0 then
+                        currentPiece.rotateCounterclockwise()
+                        for i = 1, offsetl do
+                            currentPiece.moveLeft()
+                        end
+                    elseif offsetr > 0 then
+                        currentPiece.rotateCounterclockwise()
+                        for i = 1, offsetr do
+                            currentPiece.moveRight()
+                        end
                     end
                 end
-            end
-        elseif key == "x" then
-            if currentPiece.canRotateClockwise() then
-                currentPiece.rotateClockwise()
-            else
-                local offsetl, offsetr = currentPiece.canRotateClockwiseWithLeniency()
-                if offsetl > 0 then
+            elseif key == "x" then
+                if currentPiece.canRotateClockwise() then
                     currentPiece.rotateClockwise()
-                    for i = 1, offsetl do
-                        currentPiece.moveLeft()
-                    end
-                elseif offsetr > 0 then
-                    currentPiece.rotateClockwise()
-                    for i = 1, offsetr do
-                        currentPiece.moveRight()
+                else
+                    local offsetl, offsetr = currentPiece.canRotateClockwiseWithLeniency()
+                    if offsetl > 0 then
+                        currentPiece.rotateClockwise()
+                        for i = 1, offsetl do
+                            currentPiece.moveLeft()
+                        end
+                    elseif offsetr > 0 then
+                        currentPiece.rotateClockwise()
+                        for i = 1, offsetr do
+                            currentPiece.moveRight()
+                        end
                     end
                 end
+            elseif key == "c" and not heldPiece then -- hold
+                if isHoldEmpty then
+                    holdPiece = currentPiece.hold()
+                    throwNextPiece()
+                    isHoldEmpty = false
+                else
+                    local tempPiece = holdPiece
+                    holdPiece = currentPiece.hold()
+                    currentPiece = tempPiece
+                end
+                heldPiece = true
             end
-        elseif key == "c" and not heldPiece then -- hold
-            if isHoldEmpty then
-                holdPiece = currentPiece.hold()
-                throwNextPiece()
-                isHoldEmpty = false
-            else
-                local tempPiece = holdPiece
-                holdPiece = currentPiece.hold()
-                currentPiece = tempPiece
-            end
-            heldPiece = true
+
         end
     end
 
@@ -220,8 +249,10 @@ function Game()
         elseif state == GAME_STATES.GAME then
             drawHud()
             bottle.draw()
-            shadowPiece.draw(10, 10)
-            currentPiece.draw(10, 10)
+            if bottle.isActive() then
+                shadowPiece.draw(10, 10)
+                currentPiece.draw(10, 10)
+            end
         elseif state == GAME_STATES.GAMEOVER then
             love.graphics.setColor(255, 255, 255)
             love.graphics.printf("GAME OVER", 0, 100, 320, "center")
