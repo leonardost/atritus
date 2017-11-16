@@ -61,12 +61,6 @@ function Game()
             bottle.setThrowNextPiece()
         end
 
-        -- throwNextPiece()
-        -- if currentPiece.isConflicting() then
-        --     currentPiece.consolidate()
-        --     -- show game over animation
-        --     state = GAME_STATES.GAMEOVER
-        -- end
         heldPiece = false
     end
 
@@ -88,11 +82,13 @@ function Game()
 
     function self.update(dt)
         if state == GAME_STATES.TITLE then
+
             timeSinceLastDrawPressChange = timeSinceLastDrawPressChange + dt
             if timeSinceLastDrawPressChange > 0.5 then
                 shouldDrawPress = not shouldDrawPress
                 timeSinceLastDrawPressChange = 0
             end
+
         elseif state == GAME_STATES.GAME then
 
             bottle.update(dt)
@@ -119,8 +115,6 @@ function Game()
                     consolidatePieceAndDoEverythingElse()
                 end
                 updateShadow()
-            
-            elseif bottle.isClearingLines() then
 
             elseif bottle.isThrowNextPiece() then
                 throwNextPiece()
@@ -131,8 +125,6 @@ function Game()
                 end
                 bottle.setActive()
             end
-
-        elseif state == GAME_STATES.GAMEOVER then
 
         end
     end

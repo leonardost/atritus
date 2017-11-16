@@ -16,7 +16,7 @@ function Block(x, y, color, state)
     self.color = color
     self.state = state
     local blinkingState = BLINKING_STATES.ON
-    local BLINKING_TIME = 0.25
+    local BLINKING_TIME = 0.2
     local timeInBlinkingState = 0
 
     function self.copy()
@@ -28,12 +28,12 @@ function Block(x, y, color, state)
         self.y = y
     end
 
-    function self.isActive()
-        return self.state == STATES.ACTIVE
-    end
-
     function self.setActive()
         self.state = STATES.ACTIVE
+    end
+
+    function self.isActive()
+        return self.state == STATES.ACTIVE
     end
 
     function self.enterBlinkingState()
@@ -67,8 +67,13 @@ function Block(x, y, color, state)
         end
     end
 
+    local function shouldDraw()
+        return self.state == STATES.ACTIVE or
+                self.state == STATES.BLINKING and blinkingState == BLINKING_STATES.ON
+    end
+
     function self.draw(dt)
-        if self.state == STATES.ACTIVE or (self.state == STATES.BLINKING and blinkingState == BLINKING_STATES.ON) then
+        if shouldDraw() then
             love.graphics.setColor(self.color)
             love.graphics.rectangle("fill", self.x, self.y, 10, 10)
         end

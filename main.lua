@@ -1,7 +1,6 @@
 --[[
     Features to implement:
     - Improve visuals
-      - Line clearing effect 
       - Backgrounds
       - Music and SFX
     - Improve gameplay

@@ -5,12 +5,12 @@ function Bottle()
         CLEARING_LINES = 2,
         THROW_NEXT_PIECE = 3
     }
+    local BLINKING_STATE_TIME = 0.8
 
     local self = {}
     local bottle = {}
     local state = STATES.ACTIVE
     local timeInLineClearingState = 0
-    local BLINKING_STATE_TIME = 1
     local clearedLines = {}
 
     for i = 1, CONFIG.BOTTLE_HEIGHT do
@@ -103,7 +103,6 @@ function Bottle()
     end
 
     local function dropLine(line)
-        print("Dropping line " .. line)
         for i = line, 2, -1 do
             for j = 1, CONFIG.BOTTLE_WIDTH do
                 bottle[i][j] = bottle[i - 1][j].copy()
@@ -113,7 +112,6 @@ function Bottle()
     end
 
     local function removeCompletedLines()
-        -- local clearedLines = getClearedLines()
         -- the line offset compensates the lines that fall down
         local lineOffset = 0
         for i = #clearedLines, 1, -1 do
