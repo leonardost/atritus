@@ -6,7 +6,6 @@
     - Improve gameplay
       - Create options screen
         - BGM volume, SFX volume
-        - Toggle shadow piece on/off
 --]]
 
 require('src/Config')
@@ -19,6 +18,8 @@ local game
 
 function love.load()
     math.randomseed(os.time())
+    love.graphics.setDefaultFilter("nearest","nearest")
+    logoImage = love.graphics.newImage("res/logo.png")    
     love.window.setTitle("Atritus")
     love.window.setMode(320 * CONFIG.scale, 240 * CONFIG.scale, { centered = true })
     game = Game()

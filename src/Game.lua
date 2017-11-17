@@ -1,3 +1,8 @@
+require('src/State')
+require('src/TitleState')
+
+local titleState = TitleState()
+
 function Game()
 
     local GAME_STATES = {
@@ -7,6 +12,8 @@ function Game()
     }
 
     local self = {}
+
+    local currentState = TitleState()
 
     local state = GAME_STATES.TITLE
     local shouldDrawPress = true
@@ -81,13 +88,11 @@ function Game()
     end
 
     function self.update(dt)
+        currentState.update(dt)
+
         if state == GAME_STATES.TITLE then
 
-            timeSinceLastDrawPressChange = timeSinceLastDrawPressChange + dt
-            if timeSinceLastDrawPressChange > 0.5 then
-                shouldDrawPress = not shouldDrawPress
-                timeSinceLastDrawPressChange = 0
-            end
+            
 
         elseif state == GAME_STATES.GAME then
 
@@ -205,6 +210,8 @@ function Game()
                     currentPiece = tempPiece
                 end
                 heldPiece = true
+            elseif key == "s" then
+                CONFIG.showShadow = not CONFIG.showShadow
             end
 
         end
@@ -212,8 +219,7 @@ function Game()
 
     local function drawTitle()
         love.graphics.setColor(255, 255, 255)
-        love.graphics.rectangle("line", 130, 30, 60, 30)
-        love.graphics.printf("ATRITUS", 0, 40, 320, "center")
+        love.graphics.draw(logoImage, 14, 30)
         if shouldDrawPress then
             love.graphics.printf("Press any key to start", 0, 110, 320, "center")
         end
@@ -236,13 +242,17 @@ function Game()
     end
 
     function self.draw()
+        currentState.draw()
+
         if state == GAME_STATES.TITLE then
             drawTitle()
         elseif state == GAME_STATES.GAME then
             drawHud()
             bottle.draw()
             if bottle.isActive() then
-                shadowPiece.draw(10, 10)
+                if CONFIG.showShadow then
+                    shadowPiece.draw(10, 10)
+                end
                 currentPiece.draw(10, 10)
             end
         elseif state == GAME_STATES.GAMEOVER then

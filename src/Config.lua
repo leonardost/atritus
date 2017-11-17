@@ -20,6 +20,7 @@ CONFIG.BOTTLE_HEIGHT = 21
 CONFIG.tableOfPoints = { 10, 25, 75, 200 }
 CONFIG.linesClearedToPassLevels = { 10, 20, 30, 40, 50, 60, 70, 80 }
 CONFIG.velocityOfLevels = { 1, 0.8, 0.6, 0.3, 0.1, 0.08, 0.06, 0.05 }
+CONFIG.showShadow = true
 
 CONFIG.debug = false
 CONFIG.nextPiece = 1
