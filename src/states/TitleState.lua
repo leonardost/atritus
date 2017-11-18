@@ -1,8 +1,3 @@
--- local StateManager = require('src/states/StateManager')
--- print("-----")
--- print(StateManager)
--- print("-----")
-
 function TitleState()
 
     local self = State()

@@ -1,6 +1,6 @@
 CONFIG = {}
 
-CONFIG.VERSION = "v1.1.0"
+CONFIG.VERSION = "v1.2.0"
 CONFIG.scale = 2
 CONFIG.COLORS = {
     { 0, 0, 255 },
