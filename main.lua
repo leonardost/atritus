@@ -14,8 +14,7 @@ require('src/states/State')
 require('src/states/TitleState')
 require('src/states/GameState')
 require('src/states/GameOverState')
-
-StateManager = require('src/StateManager')
+local StateManager = require('src/states/StateManager')
 
 function love.load()
     math.randomseed(os.time())
@@ -24,7 +23,6 @@ function love.load()
     love.window.setTitle("Atritus")
     love.window.setMode(320 * CONFIG.scale, 240 * CONFIG.scale, { centered = true })
     StateManager.switch(TitleState())
-    print("Everything loaded")
 end
 
 function love.update(dt)

@@ -1,3 +1,5 @@
+local StateManager = require('src/states/StateManager')
+
 function TitleState()
 
     local self = State()
