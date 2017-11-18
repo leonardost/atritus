@@ -1,26 +1,8 @@
-require('src/State')
-require('src/TitleState')
+local StateManager = require('src/states/StateManager')
 
-local titleState = TitleState()
+function GameState()
 
-function Game()
-
-    local GAME_STATES = {
-        TITLE = 1,
-        GAME = 2,
-        GAMEOVER = 3
-    }
-
-    local self = {}
-
-    local currentState = TitleState()
-
-    local state = GAME_STATES.TITLE
-    local shouldDrawPress = true
-    local timeSinceLastDrawPressChange = 0
-    local keyDelay = 0
-    local keyDelayThreshold = 0.3
-    local secondaryKeyDelayThreshould = 0.02
+    local self = State()
 
     local level = 1
     local points = 0
@@ -41,6 +23,10 @@ function Game()
     end
     local shadowPiece = currentPiece.copy()
     shadowPiece.setShadow()
+
+    local keyDelay = 0
+    local keyDelayThreshold = 0.3
+    local secondaryKeyDelayThreshould = 0.02
 
     local function updateShadow()
         shadowPiece = currentPiece.copy()
@@ -88,49 +74,68 @@ function Game()
     end
 
     function self.update(dt)
-        currentState.update(dt)
 
-        if state == GAME_STATES.TITLE then
+        bottle.update(dt)
 
+        if bottle.isActive() then
             
-
-        elseif state == GAME_STATES.GAME then
-
-            bottle.update(dt)
-
-            if bottle.isActive() then
-
-                if love.keyboard.isDown("left") and currentPiece.canMoveLeft() and keyDelayPassed(dt) then
-                    currentPiece.moveLeft()
+            if love.keyboard.isDown("left") and currentPiece.canMoveLeft() and keyDelayPassed(dt) then
+                currentPiece.moveLeft()
+                keyDelay = secondaryKeyDelayThreshould
+            elseif love.keyboard.isDown("right") and currentPiece.canMoveRight() and keyDelayPassed(dt) then
+                currentPiece.moveRight()
+                keyDelay = secondaryKeyDelayThreshould
+            elseif love.keyboard.isDown("down") and keyDelayPassed(dt) then
+                if currentPiece.canFallFurther() then
+                    currentPiece.fall()
                     keyDelay = secondaryKeyDelayThreshould
-                elseif love.keyboard.isDown("right") and currentPiece.canMoveRight() and keyDelayPassed(dt) then
-                    currentPiece.moveRight()
-                    keyDelay = secondaryKeyDelayThreshould
-                elseif love.keyboard.isDown("down") and keyDelayPassed(dt) then
-                    if currentPiece.canFallFurther() then
-                        currentPiece.fall()
-                        keyDelay = secondaryKeyDelayThreshould
-                    else
-                        currentPiece.consolidate()
-                        consolidatePieceAndDoEverythingElse()
-                    end
-                end
-
-                if currentPiece.update(dt, level) == 1 then
+                else
+                    currentPiece.consolidate()
                     consolidatePieceAndDoEverythingElse()
                 end
-                updateShadow()
-
-            elseif bottle.isThrowNextPiece() then
-                throwNextPiece()
-                if currentPiece.isConflicting() then
-                    currentPiece.consolidate()
-                    -- show game over animation
-                    state = GAME_STATES.GAMEOVER
-                end
-                bottle.setActive()
             end
 
+            if currentPiece.update(dt, level) == 1 then
+                consolidatePieceAndDoEverythingElse()
+            end
+            updateShadow()
+
+        elseif bottle.isThrowNextPiece() then
+            throwNextPiece()
+            if currentPiece.isConflicting() then
+                currentPiece.consolidate()
+                -- show game over animation
+                local gameOverState = GameOverState()
+                gameOverState.setPoints(points)
+                StateManager.switch(gameOverState)
+            end
+            bottle.setActive()
+        end
+    end
+
+    local function drawHud()
+        nextPiece.draw(110, 45)
+        if not isHoldEmpty then
+            holdPiece.draw(110, 125)
+        end
+        love.graphics.setColor(255, 255, 255)
+        love.graphics.print("Next", 140, 10)
+        love.graphics.rectangle("line", 140, 30, 60, 50)
+        love.graphics.print("Hold", 140, 90)
+        love.graphics.rectangle("line", 140, 110, 60, 50)
+        love.graphics.print("Level " .. level, 140, 170)
+        love.graphics.print("Points: " .. points, 140, 185)
+        love.graphics.print("Lines cleared: " .. totalLinesCleared, 140, 200)
+    end
+
+    function self.draw()
+        drawHud()
+        bottle.draw()
+        if bottle.isActive() then
+            if CONFIG.showShadow then
+                shadowPiece.draw(10, 10)
+            end
+            currentPiece.draw(10, 10)
         end
     end
 
@@ -140,11 +145,6 @@ function Game()
     end
 
     function self.keyPressed(key)
-
-        if state == GAME_STATES.TITLE then
-            state = GAME_STATES.GAME
-            return
-        end
 
         if bottle.isActive() then
 
@@ -214,52 +214,6 @@ function Game()
                 CONFIG.showShadow = not CONFIG.showShadow
             end
 
-        end
-    end
-
-    local function drawTitle()
-        love.graphics.setColor(255, 255, 255)
-        love.graphics.draw(logoImage, 14, 30)
-        if shouldDrawPress then
-            love.graphics.printf("Press any key to start", 0, 110, 320, "center")
-        end
-        love.graphics.printf(CONFIG.VERSION, 0, 190, 320, "center")
-    end
-
-    local function drawHud()
-        nextPiece.draw(110, 45)
-        if not isHoldEmpty then
-            holdPiece.draw(110, 125)
-        end
-        love.graphics.setColor(255, 255, 255)
-        love.graphics.print("Next", 140, 10)
-        love.graphics.rectangle("line", 140, 30, 60, 50)
-        love.graphics.print("Hold", 140, 90)
-        love.graphics.rectangle("line", 140, 110, 60, 50)
-        love.graphics.print("Level " .. level, 140, 170)
-        love.graphics.print("Points: " .. points, 140, 185)
-        love.graphics.print("Lines cleared: " .. totalLinesCleared, 140, 200)
-    end
-
-    function self.draw()
-        currentState.draw()
-
-        if state == GAME_STATES.TITLE then
-            drawTitle()
-        elseif state == GAME_STATES.GAME then
-            drawHud()
-            bottle.draw()
-            if bottle.isActive() then
-                if CONFIG.showShadow then
-                    shadowPiece.draw(10, 10)
-                end
-                currentPiece.draw(10, 10)
-            end
-        elseif state == GAME_STATES.GAMEOVER then
-            love.graphics.setColor(255, 255, 255)
-            love.graphics.printf("GAME OVER", 0, 100, 320, "center")
-            love.graphics.printf("HIGH SCORE", 0, 140, 320, "center")
-            love.graphics.printf(points, 0, 160, 320, "center")
         end
     end
 

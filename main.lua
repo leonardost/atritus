@@ -3,18 +3,19 @@
     - Improve visuals
       - Backgrounds
       - Music and SFX
-    - Improve gameplay
-      - Create options screen
-        - BGM volume, SFX volume
 --]]
 
 require('src/Config')
-require('src/Game')
 require('src/Block')
 require('src/Bottle')
 require('src/Piece')
 
-local game
+require('src/states/State')
+require('src/states/TitleState')
+require('src/states/GameState')
+require('src/states/GameOverState')
+
+StateManager = require('src/StateManager')
 
 function love.load()
     math.randomseed(os.time())
@@ -22,11 +23,12 @@ function love.load()
     logoImage = love.graphics.newImage("res/logo.png")    
     love.window.setTitle("Atritus")
     love.window.setMode(320 * CONFIG.scale, 240 * CONFIG.scale, { centered = true })
-    game = Game()
+    StateManager.switch(TitleState())
+    print("Everything loaded")
 end
 
 function love.update(dt)
-    game.update(dt)
+    StateManager.update(dt)
 end
 
 function love.keypressed(key)
@@ -42,13 +44,13 @@ function love.keypressed(key)
         CONFIG.scale = 3
         love.window.setMode(320 * CONFIG.scale, 240 * CONFIG.scale, { centered = true })
     else
-        game.keyPressed(key)
+        StateManager.keyPressed(key)
     end
 end
 
 function love.draw(dt)
     love.graphics.push()
     love.graphics.scale(CONFIG.scale, CONFIG.scale)
-    game.draw()
+    StateManager.draw()
     love.graphics.pop()
 end
