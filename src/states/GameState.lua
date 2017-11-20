@@ -212,9 +212,14 @@ function GameState()
                 heldPiece = true
             elseif key == "s" then
                 CONFIG.showShadow = not CONFIG.showShadow
+            elseif key == "p" then
+                bottle.pause()
             end
 
+        elseif bottle.isPaused() and key == "p" then
+            bottle.pause()
         end
+
     end
 
     return self

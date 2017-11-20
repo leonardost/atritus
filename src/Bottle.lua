@@ -3,7 +3,8 @@ function Bottle()
     local STATES = {
         ACTIVE = 1,
         CLEARING_LINES = 2,
-        THROW_NEXT_PIECE = 3
+        THROW_NEXT_PIECE = 3,
+        PAUSE = 4
     }
     local BLINKING_STATE_TIME = 0.8
 
@@ -58,6 +59,18 @@ function Bottle()
         return state == STATES.THROW_NEXT_PIECE
     end
 
+    function self.isPaused()
+        return state == STATES.PAUSE
+    end
+
+    function self.pause()
+        if state == STATES.ACTIVE then
+            state = STATES.PAUSE
+        elseif state == STATES.PAUSE then
+            state = STATES.ACTIVE
+        end
+    end
+
     local function isCompleteLine(line)
         for i = 1, CONFIG.BOTTLE_WIDTH do
             if not bottle[line][i].isActive() then
@@ -99,6 +112,11 @@ function Bottle()
     end
 
     function self.update(dt)
+
+        if state == STATES.PAUSE then
+            return
+        end
+
         for i = 1, CONFIG.BOTTLE_HEIGHT do
             for j = 1, CONFIG.BOTTLE_WIDTH do
                 bottle[i][j].update(dt)
@@ -133,7 +151,12 @@ function Bottle()
 
     function self.draw()
         drawBottle()
-        drawBlocks()
+        if state ~= STATES.PAUSE then
+            drawBlocks()
+        else
+            love.graphics.setColor(255, 255, 255)
+            love.graphics.printf("PAUSED", 10, 110, 100, "center")
+        end
     end
 
     return self
