@@ -1,4 +1,5 @@
 local StateManager = require('src/states/StateManager')
+local SoundManager = require('src/SoundManager')
 
 function GameState()
 
@@ -50,6 +51,7 @@ function GameState()
         if #clearedLines > 0 then
             updatePointsAndLevel(clearedLines)
             bottle.setClearingLines()
+            SoundManager.play("LINE_CLEAR")
         else
             bottle.setThrowNextPiece()
         end

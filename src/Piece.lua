@@ -1,4 +1,5 @@
 local pieces = require('src/pieces')
+local SoundManager = require('src/SoundManager')
 
 function Piece(type, rotation, x, y, bottle)
 
@@ -62,6 +63,7 @@ function Piece(type, rotation, x, y, bottle)
         if rotation == 0 then
             rotation = 4
         end
+        SoundManager.play("ROTATE")
     end
 
     function self.rotateClockwise()
@@ -69,6 +71,7 @@ function Piece(type, rotation, x, y, bottle)
         if rotation == 5 then
             rotation = 1
         end
+        SoundManager.play("ROTATE")
     end
 
     function self.isConflicting()

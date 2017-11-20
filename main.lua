@@ -1,6 +1,5 @@
 --[[
     Features to implement:
-    - Improve visuals
       - Backgrounds
       - Music and SFX
 --]]
@@ -15,6 +14,7 @@ require('src/states/TitleState')
 require('src/states/GameState')
 require('src/states/GameOverState')
 local StateManager = require('src/states/StateManager')
+local SoundManager = require('src/SoundManager')
 
 function love.load()
     math.randomseed(os.time())

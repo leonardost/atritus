@@ -1,4 +1,5 @@
 local StateManager = require('src/states/StateManager')
+local SoundManager = require('src/SoundManager')
 
 function TitleState()
 

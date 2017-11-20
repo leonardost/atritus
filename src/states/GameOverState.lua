@@ -1,3 +1,5 @@
+local SoundManager = require('src/SoundManager')
+
 function GameOverState()
 
     local self = State()
@@ -62,6 +64,9 @@ function GameOverState()
         end
         newHighScorePosition = positionToInsert
         table.insert(scoreTable, positionToInsert, {name = name, score = score})
+        if #scoreTable > 10 then
+            table.remove(scoreTable)
+        end
     end
 
     local function saveScoreTable()
