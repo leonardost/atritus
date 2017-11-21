@@ -139,6 +139,8 @@ function Bottle()
         h = CONFIG.BOTTLE_HEIGHT * 10 + 2
         love.graphics.setColor(255, 255, 255)
         love.graphics.rectangle("line", x, y, w, h)
+        love.graphics.setColor(0, 0, 0, 215)
+        love.graphics.rectangle("fill", x + 1, y + 1, w - 2, h - 2)
     end
 
     local function drawBlocks()

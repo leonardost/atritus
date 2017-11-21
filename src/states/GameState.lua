@@ -116,21 +116,28 @@ function GameState()
     end
 
     local function drawHud()
+        love.graphics.setColor(255, 255, 255)
+        love.graphics.print("Next", 140, 10)
+        love.graphics.print("Hold", 140, 90)
+        love.graphics.print("Level " .. level, 140, 170)
+        love.graphics.print("Points: " .. points, 140, 185)
+        love.graphics.print("Lines cleared: " .. totalLinesCleared, 140, 200)
+
+        love.graphics.rectangle("line", 140, 30, 60, 50)
+        love.graphics.rectangle("line", 140, 110, 60, 50)
+        love.graphics.setColor(0, 0, 0, 215)
+        love.graphics.rectangle("fill", 141, 31, 58, 48)
+        love.graphics.rectangle("fill", 141, 111, 58, 48)
+
         nextPiece.draw(110, 45)
         if not isHoldEmpty then
             holdPiece.draw(110, 125)
         end
-        love.graphics.setColor(255, 255, 255)
-        love.graphics.print("Next", 140, 10)
-        love.graphics.rectangle("line", 140, 30, 60, 50)
-        love.graphics.print("Hold", 140, 90)
-        love.graphics.rectangle("line", 140, 110, 60, 50)
-        love.graphics.print("Level " .. level, 140, 170)
-        love.graphics.print("Points: " .. points, 140, 185)
-        love.graphics.print("Lines cleared: " .. totalLinesCleared, 140, 200)
     end
 
     function self.draw()
+        love.graphics.setColor(255, 255, 255)
+        love.graphics.draw(scenario1, 0, 0)
         drawHud()
         bottle.draw()
         if bottle.isActive() then
