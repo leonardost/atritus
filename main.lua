@@ -1,6 +1,5 @@
 --[[
     Features to implement:
-      - Backgrounds
       - Music and SFX
 --]]
 
@@ -21,6 +20,7 @@ function love.load()
     love.graphics.setDefaultFilter("nearest","nearest")
     logoImage = love.graphics.newImage("res/logo.png")
     scenario1 = love.graphics.newImage("res/scenario1.png")
+    scenario2 = love.graphics.newImage("res/scenario2.png")
     love.window.setTitle("Atritus")
     love.window.setMode(320 * CONFIG.scale, 240 * CONFIG.scale, { centered = true })
     StateManager.switch(TitleState())

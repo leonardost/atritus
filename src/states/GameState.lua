@@ -137,7 +137,7 @@ function GameState()
 
     function self.draw()
         love.graphics.setColor(255, 255, 255)
-        love.graphics.draw(scenario1, 0, 0)
+        love.graphics.draw(scenario2, 0, 0)
         drawHud()
         bottle.draw()
         if bottle.isActive() then
